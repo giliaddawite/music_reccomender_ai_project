@@ -1,152 +1,205 @@
-# 🎵 Music Recommender Simulation
+# 🎵 Music Recommender AI Project
 
-![Screenshot of recommender output](../image.png)
-![Top 5 reccommendation for Conflicted Pop](image-1.png)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## Project Summary
+An intelligent music recommendation system that learns from user feedback to improve suggestions over time. Built with Python, featuring content-based filtering and adaptive weighting.
 
-This version loads songs from `data/songs.csv` and uses a simple content-based recommender to match songs to a user's taste profile. It compares genre, mood, energy, valence, danceability, and acousticness to produce a ranked list of the best songs. The app also explains why each recommendation was chosen so the output is easy to understand.
+![Screenshot of recommender output](assets/image.png)
+![Top 5 recommendations for Conflicted Pop](assets/image-1.png)
 
-Your goal is to:
+## ✨ Features
 
-- Represent songs and a user "taste profile" as data
-- Design a scoring rule that turns that data into recommendations
-- Evaluate what your system gets right and wrong
-- Reflect on how this mirrors real world AI recommenders
+- **Content-Based Recommendations**: Matches songs based on genre, mood, energy, valence, danceability, and acousticness
+- **Adaptive Learning**: Incorporates user feedback to dynamically adjust recommendation weights
+- **Transparent Explanations**: Provides clear reasoning for each recommendation
+- **Comprehensive Testing**: 20+ unit tests covering core logic, edge cases, and integration scenarios
+- **Modular Architecture**: Clean separation between recommendation engine, feedback analysis, and user interface
 
----
+## 🚀 Quick Start
 
-## How The System Works
+### Prerequisites
+- Python 3.8 or higher
+- pip package manager
 
-### The Concept
-Real-world recommenders (Spotify, TikTok) work by comparing what users have liked in the past with songs they haven't heard yet. This system finds songs that are **similar to past favorites** based on audio features. Our version uses **content-based filtering**: instead of comparing user behavior, we compare the actual audio properties of songs. We prioritize **genre and mood matches** (because users typically like the same type of music) and then fine-tune recommendations with **energy levels and emotional tone** to find songs that feel just right.
+### Installation
 
-### Song Features (What We Analyze)
-Each `Song` object contains:
-- **genre** - Type of music (pop, rock, lofi, jazz, etc.)
-- **mood** - Emotional feel (happy, chill, intense, relaxed, etc.)
-- **energy** - How intense/exciting (0.0-1.0 scale)
-- **valence** - How positive/cheerful (0.0-1.0 scale)
-- **danceability** - How suitable for dancing (0.0-1.0 scale)
-- **acousticness** - Acoustic vs. electronic (0.0-1.0 scale)
-- Plus metadata: id, title, artist, tempo_bpm
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/giliaddawite/music_reccomender_ai_project.git
+   cd music_reccomender_ai_project
+   ```
 
-### User Profile (What We Know About Users)
-Each `UserProfile` stores:
-- **favorite_genre** - Their preferred music type
-- **favorite_mood** - Their preferred emotional tone
-- **target_energy** - How intense they like songs
-- **likes_acoustic** - Whether they prefer acoustic or electronic sounds
-
-### Scoring Algorithm
-For each song, we calculate a **similarity score** (0-1):
-1. **Genre match**: Exact match = 1.0, no match = 0.0
-2. **Mood match**: Exact match = 1.0, no match = 0.0  
-3. **Energy match**: `1 - |song_energy - user_target_energy|` (rewards closeness)
-4. **Valence match**: `1 - |song_valence - user_target_valence|`
-5. **Danceability match**: `1 - |song_danceability - user_target_danceability|`
-6. **Acousticness preference**: reward high acousticness if the user likes acoustic music, otherwise reward low acousticness
-7. **Combine with weights**: Genre (25%) + Mood (20%) + Energy (20%) + Valence (15%) + Danceability (12%) + Acousticness (8%)
-
-### Algorithm Recipe
-- Load all songs from `data/songs.csv`
-- Convert each song into a feature dictionary
-- Compare each song against the user taste profile
-- Produce a numeric score for every song
-- Remove songs below a confidence threshold
-- Sort remaining songs by score in descending order
-- Return the top 5 matched songs
-
-### Potential Biases
-- This system may **over-prioritize genre**, so a great song in a different genre could be ignored even if it fits the user's mood and energy.
-- It also treats mood and genre as exact categories, which can be too strict for users who like mixed or evolving tastes.
-- Because weights favor genre and mood, the system may under-value subtler matches like tempo or acoustic feel.
-
-### Ranking & Selection
-1. Score all songs
-2. Filter out low-confidence matches (score < 0.40)
-3. Sort by score (highest first)
-4. Return top 5 recommendations
-
----
-
-## Getting Started
-
-### Setup
-
-1. Create a virtual environment (optional but recommended):
-
+2. **Create virtual environment** (recommended)
    ```bash
    python -m venv .venv
-   source .venv/bin/activate      # Mac or Linux
-   .venv\Scripts\activate         # Windows
+   # On Windows:
+   .venv\Scripts\activate
+   # On macOS/Linux:
+   source .venv/bin/activate
+   ```
 
-2. Install dependencies
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Run the application**
+   ```bash
+   python -m src.main
+   ```
+
+## 📖 How It Works
+
+### Core Components
+
+#### 🎵 Song Representation
+Each song is modeled with audio features:
+- **Genre**: pop, rock, lofi, jazz, etc.
+- **Mood**: happy, chill, intense, relaxed, etc.
+- **Energy**: Intensity level (0.0-1.0)
+- **Valence**: Positivity/cheerfulness (0.0-1.0)
+- **Danceability**: Suitability for dancing (0.0-1.0)
+- **Acousticness**: Acoustic vs electronic (0.0-1.0)
+
+#### 👤 User Profile
+Captures user preferences:
+- Favorite genre and mood
+- Target energy level
+- Acoustic preference
+
+#### 🧠 Recommendation Engine
+Uses weighted similarity scoring:
+- **Genre Match**: Exact match bonus
+- **Mood Match**: Exact match bonus
+- **Feature Similarity**: Distance-based scoring for numeric features
+- **Adaptive Weights**: Learn from user feedback to prioritize important features
+
+#### 📊 Feedback Analysis
+Analyzes user ratings to detect patterns:
+- Computes averages and gaps between liked/disliked songs
+- Identifies genre diversity and feature preferences
+- Adjusts recommendation weights based on feedback patterns
+
+### Algorithm Flow
+
+1. **Initial Recommendations**: Score all songs against user profile using default weights
+2. **User Feedback**: Collect likes/dislikes/skips for recommendations
+3. **Pattern Analysis**: Compute statistics on liked vs disliked songs
+4. **Weight Adjustment**: Modify feature weights based on feedback patterns
+5. **Improved Recommendations**: Generate new suggestions with updated weights
+
+## 🧪 Testing
+
+Run the comprehensive test suite:
 
 ```bash
-pip install -r requirements.txt
+# Run all tests
+python -m pytest tests/
+
+# Run specific test file
+python -m pytest tests/test_feedback_agent.py -v
+
+# Run with coverage
+python -m pytest --cov=src tests/
 ```
 
-3. Run the app:
+### Test Coverage
 
-```bash
-python -m src.main
+- **Layer 1**: Core measurement accuracy (6 tests)
+  - Energy gap calculations
+  - Genre diversity detection
+  - Edge cases (no likes/dislikes)
+
+- **Layer 2**: Weight adjustment decisions (10 tests)
+  - Gap-based weight modifications
+  - Genre logic (diversity vs consistency)
+  - Safety invariants (bounds, normalization)
+
+- **Layer 3**: Multi-round integration (3 tests)
+  - Learning behavior over time
+  - Structural validity maintenance
+
+## 📁 Project Structure
+
+```
+music_reccomender_ai_project/
+├── src/
+│   ├── __init__.py
+│   ├── main.py              # Application entry point
+│   ├── recommender.py       # Core recommendation logic
+│   ├── feedback_agent.py    # Feedback analysis and weight adjustment
+│   └── logger.py            # Logging utilities
+├── tests/
+│   ├── test_recommender.py  # Basic recommender tests
+│   └── test_feedback_agent.py # Comprehensive feedback tests
+├── data/
+│   └── songs.csv           # Song dataset
+├── assets/                 # Images and assets
+├── requirements.txt        # Python dependencies
+├── model_card.md          # Model documentation
+└── README.md              # This file
 ```
 
-### Running Tests
+## 🔧 Configuration
 
-Run the starter tests with:
-
-```bash
-pytest
+### Default Weights
+```python
+DEFAULT_WEIGHTS = {
+    "genre": 0.17,
+    "mood": 0.17,
+    "energy": 0.17,
+    "valence": 0.17,
+    "danceability": 0.16,
+    "acousticness": 0.16,
+}
 ```
 
-You can add more tests in `tests/test_recommender.py`.
+### Weight Bounds
+- Minimum: 0.05 (prevents features from being ignored)
+- Maximum: 0.40 (prevents single features from dominating)
 
----
+## 🤝 Contributing
 
-## Experiments You Tried
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Add tests for new functionality
+4. Ensure all tests pass (`python -m pytest`)
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
-I tested the system with a workout-style profile that prefers pop, happy mood, and high energy. The top recommendations were pop and upbeat songs, which matched expectations. I also added new songs in genres like classical, reggae, and metal to check whether the ranking could still surface good matches based on energy and mood.
+## 📋 Limitations & Future Work
 
-I noticed non-pop songs could still appear if they had the right mood and energy, but genre-match songs stayed at the top.
+- **Small Dataset**: Currently uses static CSV data
+- **Categorical Matching**: Genre/mood are exact matches only
+- **Single Profile**: Assumes one taste profile per user
+- **No Collaborative Filtering**: Doesn't consider other users' preferences
 
----
+### Potential Enhancements
+- Integration with Spotify API for larger datasets
+- Fuzzy matching for genres/moods
+- Multi-profile support
+- Collaborative filtering hybrid
+- Real-time learning from streaming data
 
-## Limitations and Risks
+## 📄 Model Card
 
-This recommender uses a small catalog and does not consider lyrics, artist popularity, or real user listening history. It treats genre and mood as exact categories, so it can miss songs that feel right but are labeled in a different genre. The model also assumes one fixed taste profile per user, which is too narrow for people who like multiple styles.
+See [model_card.md](model_card.md) for detailed model documentation including:
+- Intended use and limitations
+- Performance metrics
+- Bias analysis
+- Ethical considerations
 
-You will go deeper on this in your model card.
+## 📜 License
 
----
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Reflection
+## 🙏 Acknowledgments
 
-Read and complete `model_card.md`:
-
-[**Model Card**](model_card.md)
-
-I learned that simple recommenders can still behave clearly if the scoring is transparent. It was interesting to see how much genre and mood dominate the result. This project showed me that real music recommenders need more than feature matching to feel truly personal.
-
----
-
-## 7. `model_card_template.md`
-
-Combines reflection and model card framing from the Module 3 guidance. :contentReference[oaicite:2]{index=2}  
-
-```markdown
-# 🎧 Model Card - Music Recommender Simulation
-
-## 1. Model Name
-
-Give your recommender a name, for example:
-
-> VibeFinder 1.0
-
----
-
-## 2. Intended Use
+- Built as part of AI Engineering coursework
+- Inspired by real-world recommendation systems
+- Dataset sourced from music analysis research
 
 - What is this system trying to do
 - Who is it for
