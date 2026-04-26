@@ -1,6 +1,7 @@
 from typing import List, Dict, Tuple
 from recommender import recommend_songs, DEFAULT_WEIGHTS
 from logger import log_decision
+from bias_detector import run_bias_check
 
 RATING_OPTIONS = {"l": "like", "d": "dislike", "s": "skip"}
 NUDGE = 0.05
@@ -182,6 +183,12 @@ def run_feedback_loop(
             print(f"  {song['title']} by {song['artist']}  [{score:.3f}]")
             print(f"    {explanation}\n")
 
+        bias_warnings = run_bias_check(recommendations, user_prefs, weights)
+        if bias_warnings:
+            print("\n Bias check:")
+            for warning in bias_warnings:
+                print(f"  {warning}")
+
         feedback = collect_feedback(recommendations)
         patterns = analyze_feedback(feedback)
         new_weights, reasoning = adjust_weights(weights, patterns)
@@ -191,6 +198,7 @@ def run_feedback_loop(
             "weights_before": dict(weights),
             "weights_after": new_weights,
             "reasoning": reasoning,
+            "bias_warnings": bias_warnings,
             "like_count": patterns["like_count"],
             "dislike_count": patterns["dislike_count"],
             "skip_count": patterns["skip_count"],
