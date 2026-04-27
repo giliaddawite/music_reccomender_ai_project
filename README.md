@@ -193,6 +193,6 @@ The bias detector showed me that transparency isn't just about explaining result
 
 ## Portfolio
 
-**GitHub:** [github.com/YOUR_USERNAME/music-recommender-ai](#)
+**GitHub:** [github.com/giliaddawite/music-recommender-ai](#)
 
 **What this project says about me as an AI engineer:** I built a system that doesn't just produce recommendations — it adapts to feedback, monitors its own biases, logs every decision it makes, and has 34 tests proving it works correctly. I care about making AI systems transparent and reliable, not just functional.
