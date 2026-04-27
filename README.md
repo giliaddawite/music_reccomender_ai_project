@@ -155,7 +155,7 @@ With a narrow catalog, the detector flags: "⚠ Low genre diversity: 80% of resu
 
 ## Demo Video
 
-🎥 [Loom Walkthrough — Coming Soon](#)
+ [Loom Walkthrough](https://www.loom.com/share/356b4fd8e42e464eb757fe8ab3abcbce)
 
 <!-- Replace with your actual Loom link before submission -->
 
